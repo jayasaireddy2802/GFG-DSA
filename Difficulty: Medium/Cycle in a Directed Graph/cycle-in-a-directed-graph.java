@@ -32,47 +32,93 @@ class DriverClass {
 
 /*Complete the function below*/
 
-class Solution {
-    // Function to detect cycle in a directed graph.
+// class Solution {
+//     // Function to detect cycle in a directed graph.
     
-    public boolean dfs(int i, boolean[] visited, boolean[] pathVisited, ArrayList<ArrayList<Integer>> adj)
-    {
-        visited[i] = true;
-        pathVisited[i] = true;
+//     public boolean dfs(int i, boolean[] visited, boolean[] pathVisited, ArrayList<ArrayList<Integer>> adj)
+//     {
+//         visited[i] = true;
+//         pathVisited[i] = true;
         
-        for(int neighbour : adj.get(i))
-        {
-            // self cycle
-            if(neighbour == i)
-                return true; 
+//         for(int neighbour : adj.get(i))
+//         {
+//             // self cycle
+//             if(neighbour == i)
+//                 return true; 
                 
-            if(!visited[neighbour]){
-                if(dfs(neighbour, visited, pathVisited, adj))
-                    return true;
-            }
-            else if(pathVisited[neighbour])
-                return true;
+//             if(!visited[neighbour]){
+//                 if(dfs(neighbour, visited, pathVisited, adj))
+//                     return true;
+//             }
+//             else if(pathVisited[neighbour])
+//                 return true;
                 
-        }
+//         }
         
-        pathVisited[i] = false;
-        return false;
-    }
+//         pathVisited[i] = false;
+//         return false;
+//     }
+    
+//     public boolean isCyclic(int V, ArrayList<ArrayList<Integer>> adj) {
+//         // code here
+//         boolean[] visited = new boolean[V];
+//         boolean[] pathVisited = new boolean[V];
+        
+//         for(int i = 0; i < V ; i++)
+//         {
+//             if(!visited[i])
+//             {
+//                 if(dfs(i, visited, pathVisited, adj))
+//                     return true;
+//             }
+//         }
+        
+//         return false;
+//     }
+// }
+
+
+class Solution {
     
     public boolean isCyclic(int V, ArrayList<ArrayList<Integer>> adj) {
-        // code here
-        boolean[] visited = new boolean[V];
-        boolean[] pathVisited = new boolean[V];
+        int n = adj.size();
+        int[] indegre = new int[n];
+        Queue<Integer> q = new LinkedList<>();
+        List<Integer> ans = new ArrayList<>();
         
-        for(int i = 0; i < V ; i++)
+        for(int i = 0; i < n; i++)
         {
-            if(!visited[i])
+            for(int v : adj.get(i))
+                indegre[v]++;
+        }
+        
+        for(int i = 0; i < n; i++)
+        {
+            if(indegre[i] == 0)
             {
-                if(dfs(i, visited, pathVisited, adj))
-                    return true;
+                q.add(i);
+                ans.add(i);
             }
         }
         
-        return false;
+        while(!q.isEmpty())
+        {
+            int node = q.poll();
+            
+            for(int v : adj.get(node))
+            {
+                indegre[v]--;
+                if(indegre[v] == 0)
+                {
+                    q.add(v);
+                    ans.add(v);
+                }
+            }
+        }
+        
+        if(ans.size() == n)
+            return false;
+        else
+            return true;
     }
 }
