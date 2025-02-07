@@ -54,44 +54,97 @@ class Main {
 // } Driver Code Ends
 
 
-class Solution {
-    // Function to return list containing vertices in Topological order.
+// class Solution {
+//     // Function to return list containing vertices in Topological order.
     
-    static void dfs(int i, Stack<Integer> st, boolean[] visited, ArrayList<ArrayList<Integer>> adj)
-    {
-        visited[i] = true;
+//     static void dfs(int i, Stack<Integer> st, boolean[] visited, ArrayList<ArrayList<Integer>> adj)
+//     {
+//         visited[i] = true;
         
-        for(int neighbour : adj.get(i))
-        {
-            if(!visited[neighbour])
-            {
-                dfs(neighbour, st, visited, adj);
-            }
-        }
+//         for(int neighbour : adj.get(i))
+//         {
+//             if(!visited[neighbour])
+//             {
+//                 dfs(neighbour, st, visited, adj);
+//             }
+//         }
         
-        st.push(i);
-    }
-    static ArrayList<Integer> topologicalSort(ArrayList<ArrayList<Integer>> adj) {
-        // Your code here
-        int v = adj.size();
-        ArrayList<Integer> list = new ArrayList<>();
-        boolean[] visited = new boolean[v];
-        Stack<Integer> st = new Stack<>();
+//         st.push(i);
+//     }
+//     static ArrayList<Integer> topologicalSort(ArrayList<ArrayList<Integer>> adj) {
+//         // Your code here
+//         int v = adj.size();
+//         ArrayList<Integer> list = new ArrayList<>();
+//         boolean[] visited = new boolean[v];
+//         Stack<Integer> st = new Stack<>();
         
-        for(int i = 0; i < v; i++)
-        {
-            if(!visited[i])
-            {
-                dfs(i, st, visited, adj);
+//         for(int i = 0; i < v; i++)
+//         {
+//             if(!visited[i])
+//             {
+//                 dfs(i, st, visited, adj);
                 
+//             }
+//         }
+         
+//         while(!st.isEmpty())
+//         {
+//             list.add(st.pop());
+//         }
+        
+//         return list;
+//     }
+// }
+
+// Kahns algorithm
+class Solution {
+    static ArrayList<Integer> topologicalSort(ArrayList<ArrayList<Integer>> adj) {
+        
+        int V = adj.size();
+        int[] indegre = new int[V];
+        Queue<Integer> q = new LinkedList<>();
+        ArrayList<Integer> ans = new ArrayList<Integer>();
+        
+        // indegree calculation
+        for(int i = 0; i < V; i++)
+        {
+            for(int v : adj.get(i))
+            {
+                indegre[v]++;
             }
         }
-         
-        while(!st.isEmpty())
+        
+        for(int i = 0; i < V; i++)
         {
-            list.add(st.pop());
+            if(indegre[i] == 0){
+                q.add(i);
+                ans.add(i);
+            }
         }
         
-        return list;
+        while(!q.isEmpty())
+        {
+            int n = q.poll();
+            
+            for(int v : adj.get(n))
+            {
+                indegre[v]--;
+                if(indegre[v] == 0)
+                {
+                    q.add(v);
+                    ans.add(v);
+                }
+            }
+        }
+        
+        return ans;
     }
 }
+
+
+
+
+
+
+
+
