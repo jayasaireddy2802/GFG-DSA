@@ -62,10 +62,57 @@ class iPair {
         this.first = first;
         this.second = second;
     }
+    
+     public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            iPair other = (iPair) obj;
+            return first == other.first && second == other.second;
+        }
 }
 */
 
 // User function Template for Java
+// class Solution {
+//     // Function to find the shortest distance of all the vertices
+//     // from the source vertex src.
+//     ArrayList<Integer> dijkstra(ArrayList<ArrayList<iPair>> adj, int src) {
+//         // Write your code here
+//         int V = adj.size();
+//         int[] dist = new int[V];
+//         PriorityQueue<iPair> pq = new PriorityQueue<>((x, y) -> x.first - y.first);
+//         ArrayList<Integer> ans = new ArrayList<Integer>();
+//         Arrays.fill(dist, (int)1e7);
+//         dist[src] = 0;
+        
+//         pq.add(new iPair(0, src));
+        
+//         while(!pq.isEmpty())
+//         {
+//             iPair p = pq.poll();
+//             int dis = p.first;
+//             int node = p.second;
+            
+//             for(iPair neighbours : adj.get(node))
+//             {
+//                 int neighbour = neighbours.first;
+//                 int edgeWeight = neighbours.second;
+                
+//                 if(dis + edgeWeight < dist[neighbour])
+//                 {
+//                     dist[neighbour] = dis + edgeWeight;
+//                     pq.add(new iPair(dis + edgeWeight, neighbour));
+//                 }
+//             }
+//         }
+        
+//         for(int dis : dist)
+//             ans.add(dis);
+//         return ans;
+//     }
+// }
+
+
 class Solution {
     // Function to find the shortest distance of all the vertices
     // from the source vertex src.
@@ -73,16 +120,17 @@ class Solution {
         // Write your code here
         int V = adj.size();
         int[] dist = new int[V];
-        PriorityQueue<iPair> pq = new PriorityQueue<>((x, y) -> x.first - y.first);
+        
+        TreeSet<iPair> set = new TreeSet<>((x, y) -> x.first == y.first ? x.second - y.second : x.first - y.first);
         ArrayList<Integer> ans = new ArrayList<Integer>();
         Arrays.fill(dist, (int)1e7);
         dist[src] = 0;
         
-        pq.add(new iPair(0, src));
+        set.add(new iPair(0, src));
         
-        while(!pq.isEmpty())
+        while(!set.isEmpty())
         {
-            iPair p = pq.poll();
+            iPair p = set.pollFirst();
             int dis = p.first;
             int node = p.second;
             
@@ -93,8 +141,9 @@ class Solution {
                 
                 if(dis + edgeWeight < dist[neighbour])
                 {
+                    set.remove(new iPair(dist[neighbour], neighbour));
                     dist[neighbour] = dis + edgeWeight;
-                    pq.add(new iPair(dis + edgeWeight, neighbour));
+                    set.add(new iPair(dis + edgeWeight, neighbour));
                 }
             }
         }
