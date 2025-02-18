@@ -75,3 +75,40 @@ class GFG {
 //         }
 //     }
 // }
+
+class Solution {
+    public void shortestDistance(int[][] mat) {
+        // Code here
+        int rows = mat.length;
+        int cols = mat[0].length;
+        
+        for(int i = 0; i < rows; i++)
+        {
+            for(int j = 0; j < cols; j++)
+            {
+                if(mat[i][j] == -1)
+                    mat[i][j] = (int)1e7;
+            }
+        }
+        
+        for(int k = 0; k < rows; k++)
+        {
+            for(int i = 0; i < rows; i++)
+            {
+                for(int j = 0; j < cols; j++)
+                {
+                    mat[i][j] = Math.min(mat[i][j], mat[i][k] + mat[k][j]);
+                }
+            }
+        }
+        
+        for(int i = 0; i < rows; i++)
+        {
+            for(int j = 0; j < cols; j++)
+            {
+                if(mat[i][j] == (int)1e7)
+                    mat[i][j] = -1;
+            }
+        }
+    }
+}
