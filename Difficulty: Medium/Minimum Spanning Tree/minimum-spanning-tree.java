@@ -38,40 +38,121 @@ public class Main {
 
 // User function Template for Java
 
+// class Solution {
+//     static int spanningTree(int V, int E, List<List<int[]>> adj) {
+//         // Code Here.
+//         boolean[] visited = new boolean[V];
+//         PriorityQueue<int[]> pq = new PriorityQueue<>((a,b) -> (a[0] == b[0]) ? a[1] - b[1] : a[0] - b[0]);
+//         int sum = 0;
+//         pq.add(new int[]{0, 0, -1});
+//         visited[0] = true;
+        
+//         while(!pq.isEmpty())
+//         {
+//             int[] arr = pq.poll();
+//             int wt = arr[0];
+//             int node = arr[1];
+//             int parent = arr[2];
+            
+//             if(!visited[node] && parent != -1)
+//             {
+//                 sum = sum + wt;
+//             }
+//             visited[node] = true;
+            
+//             for(int[] adjNodes : adj.get(node))
+//             {
+//                 int neighbour = adjNodes[0];
+//                 int edgewt = adjNodes[1];
+                
+//                 if(!visited[neighbour])
+//                 {
+//                     pq.add(new int[]{edgewt, neighbour, node});
+//                 }
+//             }
+//         }
+        
+//         return sum;
+//     }
+// }
+
+
+
 class Solution {
+    static List<List<Integer>> edges;
+    static int[] rank;
+    static int[] parent;
+    
+    static int findParent(int x)
+    {
+        if(parent[x] == x)
+            return x;
+        return parent[x] = findParent(parent[x]);
+    }
+    
+    static void findURank(int u, int v)
+    {
+        int parent_u = findParent(u);
+        int parent_v = findParent(v);
+        if(parent_u == parent_v)
+            return ;
+        if(rank[parent_u] > rank[parent_v])
+        {
+            parent[parent_v] = parent_u;
+        }
+        else if(rank[parent_u] < rank[parent_v])
+        {
+            parent[parent_u] = parent_v;
+        }
+        else
+        {
+            parent[parent_v] = parent_u;
+        }
+        
+        
+    }
+    
+    
     static int spanningTree(int V, int E, List<List<int[]>> adj) {
         // Code Here.
-        boolean[] visited = new boolean[V];
-        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b) -> (a[0] == b[0]) ? a[1] - b[1] : a[0] - b[0]);
-        int sum = 0;
-        pq.add(new int[]{0, 0, -1});
-        visited[0] = true;
+        edges = new ArrayList<>();
+        rank = new int[V];
+        parent = new int[V];
         
-        while(!pq.isEmpty())
+        for(int i = 0; i < V; i++)
         {
-            int[] arr = pq.poll();
-            int wt = arr[0];
-            int node = arr[1];
-            int parent = arr[2];
-            
-            if(!visited[node] && parent != -1)
+            parent[i] = i;
+        }
+        
+        for(int i = 0; i < V; i++)
+        {
+            for(int[] arr : adj.get(i))
             {
-                sum = sum + wt;
+                List l = new ArrayList<>();
+                l.add(arr[1]);
+                l.add(i);
+                l.add(arr[0]);
+                edges.add(l);
             }
-            visited[node] = true;
+        }
+        Collections.sort(edges, (a, b) -> a.get(0) - b.get(0));
+        
+        int cost = 0;
+        for(List<Integer> edge : edges)
+        {
+            int wt = edge.get(0);
+            int u = edge.get(1);
+            int v = edge.get(2);
             
-            for(int[] adjNodes : adj.get(node))
+            if(findParent(u) != findParent(v))
             {
-                int neighbour = adjNodes[0];
-                int edgewt = adjNodes[1];
-                
-                if(!visited[neighbour])
-                {
-                    pq.add(new int[]{edgewt, neighbour, node});
-                }
+                cost = cost + wt;
+                findURank(u, v);
             }
         }
         
-        return sum;
+        return cost;
+        
+        
     }
 }
